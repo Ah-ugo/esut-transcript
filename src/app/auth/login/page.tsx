@@ -36,7 +36,10 @@ export default function LoginPage() {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const res = await authApi.login(data);
+      const res = await authApi.login({
+        email: data.email,
+        password: data.password,
+      });
       const { access_token, refresh_token, user } = res.data;
       setTokens(access_token, refresh_token);
       setUser(user);
