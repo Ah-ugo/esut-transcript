@@ -1,0 +1,130 @@
+/** @format */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface-50 text-slate-800 antialiased;
+  }
+}
+
+@layer components {
+  .section-title {
+    @apply text-2xl font-bold text-slate-800 font-display;
+  }
+
+  .card {
+    @apply bg-white border border-slate-100 rounded-2xl shadow-sm;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply bg-esut-green text-white px-4 py-2 rounded-xl font-semibold 
+           hover:bg-esut-green-dark transition-colors disabled:opacity-50 
+           disabled:cursor-not-allowed shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl 
+           font-semibold hover:bg-slate-50 transition-colors shadow-sm;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 text-white px-4 py-2 rounded-xl font-semibold 
+           hover:bg-red-600 transition-colors shadow-sm;
+  }
+
+  .input {
+    @apply w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl outline-none
+           focus:ring-2 focus:ring-esut-green/20 focus:border-esut-green transition-all;
+  }
+
+  .label {
+    @apply block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border;
+  }
+
+  .badge-green {
+    @apply bg-green-50 text-green-700 border-green-100;
+  }
+  .badge-yellow {
+    @apply bg-yellow-50 text-yellow-700 border-yellow-100;
+  }
+  .badge-red {
+    @apply bg-red-50 text-red-700 border-red-100;
+  }
+  .badge-gray {
+    @apply bg-slate-50 text-slate-600 border-slate-200;
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/60 font-medium
+           hover:bg-white/5 hover:text-white transition-all duration-200;
+  }
+
+  .sidebar-item.active {
+    @apply bg-esut-green text-white shadow-lg shadow-black/10;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-slate-100;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  .status-dot.online {
+    @apply bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)];
+  }
+
+  /* Custom Grade Styles */
+  .grade-a {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+  .grade-b {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+  }
+  .grade-c {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200;
+  }
+  .grade-d {
+    @apply bg-orange-100 text-orange-800 border-orange-200;
+  }
+  .grade-e {
+    @apply bg-red-100 text-red-700 border-red-200;
+  }
+  .grade-f {
+    @apply bg-red-200 text-red-900 border-red-300;
+  }
+}
+
+/* Custom scrollbar for dashboard */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300;
+}
+
+/* Utility for the radial gauge background */
+.recharts-radial-bar-background-sector {
+  @apply fill-slate-100;
+}
+
+.table-header {
+  @apply text-xs font-bold text-slate-500 uppercase tracking-wider;
+}
+.table-row {
+  @apply hover:bg-slate-50/80 transition-colors border-b border-slate-50;
+}
