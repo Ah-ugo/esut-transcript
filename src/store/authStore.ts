@@ -38,15 +38,18 @@ export const useAuthStore = create<AuthState>()(
       isHydrated: false,
       setUser: (user) => set({ user, isAuthenticated: true }),
       setTokens: (access, refresh) => {
+        const isProd = process.env.NODE_ENV === 'production';
         Cookies.set('access_token', access, {
           expires: 1,
-          secure: true,
+          secure: isProd,
           sameSite: 'strict',
+          path: '/',
         });
         Cookies.set('refresh_token', refresh, {
           expires: 7,
-          secure: true,
+          secure: isProd,
           sameSite: 'strict',
+          path: '/',
         });
         // Update status immediately for synchronous UI checks
         set({ isAuthenticated: true });
@@ -64,9 +67,16 @@ export const useAuthStore = create<AuthState>()(
       name: 'esut-auth',
       partialize: (state) => ({
         user: state.user,
-        isAuthenticated: state.isAuthenticated,
+        // We don't strictly persist isAuthenticated as it should be verified
+        // against the presence of cookies on the client side.
       }),
-      onRehydrateStorage: () => (state) => state?.setHydrated(true),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+        const hasToken = !!Cookies.get('access_token');
+        if (state && hasToken && state.user) {
+          state.isAuthenticated = true;
+        }
+      },
     },
   ),
 );

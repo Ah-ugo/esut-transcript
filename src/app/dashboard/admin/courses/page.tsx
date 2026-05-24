@@ -40,6 +40,7 @@ export default function AdminCoursesPage() {
   const [semesterFilter, setSemesterFilter] = useState('');
   const [levelFilter, setLevelFilter] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
   const [assignModal, setAssignModal] = useState<{
     show: boolean;
     courseId: string;
@@ -132,6 +133,19 @@ export default function AdminCoursesPage() {
       toast.success('Course created successfully');
       qc.invalidateQueries({ queryKey: ['courses'] });
       setShowModal(false);
+      setEditingCourse(null);
+      reset();
+    },
+    onError: (e: any) => toast.error(getErrorMessage(e)),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (d: CourseForm) => coursesApi.update(editingCourse.id, d),
+    onSuccess: () => {
+      toast.success('Course updated');
+      qc.invalidateQueries({ queryKey: ['courses'] });
+      setShowModal(false);
+      setEditingCourse(null);
       reset();
     },
     onError: (e: any) => toast.error(getErrorMessage(e)),
@@ -325,7 +339,17 @@ export default function AdminCoursesPage() {
                         >
                           <UserPlus size={14} />
                         </button>
-                        <button className='p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600'>
+                        <button
+                          onClick={() => {
+                            setEditingCourse(c);
+                            reset({
+                              ...c,
+                              programme_code: c.programme_code || '',
+                            });
+                            setShowModal(true);
+                          }}
+                          className='p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600'
+                        >
                           <Edit2 size={14} />
                         </button>
                         <button
@@ -383,10 +407,15 @@ export default function AdminCoursesPage() {
             >
               <div className='flex items-center justify-between mb-5'>
                 <h3 className='font-semibold text-slate-800 text-lg'>
-                  Add New Course
+                  {editingCourse
+                    ? `Edit Course: ${editingCourse.code}`
+                    : 'Add New Course'}
                 </h3>
                 <button
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingCourse(null);
+                  }}
                   className='text-slate-400 hover:text-slate-600'
                 >
                   ✕
@@ -394,7 +423,9 @@ export default function AdminCoursesPage() {
               </div>
 
               <form
-                onSubmit={handleSubmit((d) => createMut.mutate(d))}
+                onSubmit={handleSubmit((d) =>
+                  editingCourse ? updateMut.mutate(d) : createMut.mutate(d),
+                )}
                 className='space-y-4'
               >
                 <div className='grid grid-cols-2 gap-4'>
@@ -493,17 +524,24 @@ export default function AdminCoursesPage() {
                 <div className='flex gap-3 justify-end pt-2'>
                   <button
                     type='button'
-                    onClick={() => setShowModal(false)}
+                    onClick={() => {
+                      setShowModal(false);
+                      setEditingCourse(null);
+                    }}
                     className='btn-secondary'
                   >
                     Cancel
                   </button>
                   <button
                     type='submit'
-                    disabled={createMut.isPending}
+                    disabled={createMut.isPending || updateMut.isPending}
                     className='btn-primary'
                   >
-                    {createMut.isPending ? 'Creating...' : 'Create Course'}
+                    {createMut.isPending || updateMut.isPending
+                      ? 'Saving...'
+                      : editingCourse
+                        ? 'Update Course'
+                        : 'Create Course'}
                   </button>
                 </div>
               </form>
