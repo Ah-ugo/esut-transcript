@@ -119,7 +119,15 @@ export default function AdminCoursesPage() {
   });
 
   const createMut = useMutation({
-    mutationFn: (d: CourseForm) => coursesApi.create(d),
+    mutationFn: (d: CourseForm) =>
+      coursesApi.create({
+        code: d.code!,
+        title: d.title!,
+        units: d.units!,
+        semester: d.semester!,
+        level: d.level!,
+        programme_code: d.programme_code!,
+      }),
     onSuccess: () => {
       toast.success('Course created successfully');
       qc.invalidateQueries({ queryKey: ['courses'] });

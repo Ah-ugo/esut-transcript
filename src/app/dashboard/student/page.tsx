@@ -84,8 +84,17 @@ export default function StudentDashboard() {
     queryFn: () =>
       studentsApi.getByMatric(user!.matric_number!).then((r) => r.data),
     enabled: !!user?.matric_number,
-    onSuccess: (d: any) => setStudentId(d.id),
-  } as any);
+  }) as {
+    data?: {
+      id?: string;
+      matric_number?: string;
+      programme_name?: string;
+    } & Record<string, any>;
+  };
+
+  useEffect(() => {
+    if (studentData?.id) setStudentId(studentData.id);
+  }, [studentData?.id]);
 
   const { data: summary, isLoading } = useQuery({
     queryKey: ['student-summary', studentId],
