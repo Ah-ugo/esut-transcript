@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 export default function AdminProgrammesPage() {
   const qc = useQueryClient();
   const [showModal, setShowModal] = useState(false);
+  const [editingProgramme, setEditingProgramme] = useState<any | null>(null);
   const { register, handleSubmit, reset } = useForm();
 
   const { data, isLoading } = useQuery({
@@ -25,10 +26,25 @@ export default function AdminProgrammesPage() {
       toast.success('Programme created');
       qc.invalidateQueries({ queryKey: ['programmes'] });
       setShowModal(false);
+      setEditingProgramme(null);
       reset();
     },
     onError: (e: any) =>
       toast.error(e.response?.data?.detail || 'Failed to create programme'),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (vars: { id: string; data: any }) =>
+      programmesApi.update(vars.id, vars.data),
+    onSuccess: () => {
+      toast.success('Programme updated');
+      qc.invalidateQueries({ queryKey: ['programmes'] });
+      setShowModal(false);
+      setEditingProgramme(null);
+      reset();
+    },
+    onError: (e: any) =>
+      toast.error(e.response?.data?.detail || 'Failed to update programme'),
   });
 
   const deleteMut = useMutation({
@@ -96,9 +112,24 @@ export default function AdminProgrammesPage() {
                   <FolderOpen size={18} className='text-esut-green' />
                 </div>
                 <div className='flex gap-1'>
-                  <button className='p-1.5 rounded-lg hover:bg-slate-100 text-slate-400'>
+                  <button
+                    onClick={() => {
+                      setEditingProgramme(p);
+                      reset({
+                        name: p.name ?? '',
+                        code: p.code ?? '',
+                        duration_years: p.duration_years ?? 4,
+                        faculty: p.faculty ?? '',
+                        department: p.department ?? '',
+                        description: p.description ?? '',
+                      });
+                      setShowModal(true);
+                    }}
+                    className='p-1.5 rounded-lg hover:bg-slate-100 text-slate-400'
+                  >
                     <Edit2 size={13} />
                   </button>
+
                   <button
                     onClick={() => {
                       if (confirm(`Delete ${p.name}?`)) deleteMut.mutate(p.id);
@@ -142,17 +173,34 @@ export default function AdminProgrammesPage() {
             >
               <div className='flex items-center justify-between mb-5'>
                 <h3 className='font-semibold text-slate-800 text-lg'>
-                  Add Programme
+                  {editingProgramme ? 'Edit Programme' : 'Add Programme'}
                 </h3>
+
                 <button
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingProgramme(null);
+                    reset();
+                  }}
                   className='text-slate-400 hover:text-slate-600'
                 >
                   ✕
                 </button>
               </div>
               <form
-                onSubmit={handleSubmit((d) => createMut.mutate(d))}
+                onSubmit={handleSubmit((d) => {
+                  if (editingProgramme) {
+                    updateMut.mutate({
+                      id: editingProgramme.id,
+                      data: {
+                        ...d,
+                        code: (d.code || '').toString().toUpperCase(),
+                      },
+                    });
+                  } else {
+                    createMut.mutate(d);
+                  }
+                })}
                 className='space-y-4'
               >
                 <div className='grid grid-cols-2 gap-4'>
@@ -209,17 +257,32 @@ export default function AdminProgrammesPage() {
                 <div className='flex gap-3 justify-end pt-2'>
                   <button
                     type='button'
-                    onClick={() => setShowModal(false)}
+                    onClick={() => {
+                      setShowModal(false);
+                      setEditingProgramme(null);
+                      reset();
+                    }}
                     className='btn-secondary'
                   >
                     Cancel
                   </button>
+
                   <button
                     type='submit'
-                    disabled={createMut.isPending}
+                    disabled={
+                      editingProgramme
+                        ? updateMut.isPending
+                        : createMut.isPending
+                    }
                     className='btn-primary'
                   >
-                    {createMut.isPending ? 'Creating...' : 'Create Programme'}
+                    {editingProgramme
+                      ? updateMut.isPending
+                        ? 'Updating...'
+                        : 'Update Programme'
+                      : createMut.isPending
+                        ? 'Creating...'
+                        : 'Create Programme'}
                   </button>
                 </div>
               </form>

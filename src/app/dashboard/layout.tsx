@@ -141,15 +141,18 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated, logout, isHydrated } = useAuthStore();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    // Wait for persisted state to rehydrate to avoid redirecting while
+    // the client is still restoring auth cookies/user.
+    if (isHydrated === false) return;
     if (!isAuthenticated) {
       router.push('/auth/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isHydrated, router]);
 
   if (!isAuthenticated || !user) {
     return (

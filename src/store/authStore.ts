@@ -38,20 +38,18 @@ export const useAuthStore = create<AuthState>()(
       isHydrated: false,
       setUser: (user) => set({ user, isAuthenticated: true }),
       setTokens: (access, refresh) => {
-        const isProd = process.env.NODE_ENV === 'production';
         Cookies.set('access_token', access, {
           expires: 1,
-          secure: isProd,
+          secure: true,
           sameSite: 'strict',
           path: '/',
         });
         Cookies.set('refresh_token', refresh, {
           expires: 7,
-          secure: isProd,
+          secure: true,
           sameSite: 'strict',
           path: '/',
         });
-        // Update status immediately for synchronous UI checks
         set({ isAuthenticated: true });
       },
       logout: () => {
@@ -65,16 +63,20 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'esut-auth',
+      // Persist both user AND isAuthenticated so refresh doesn't lose state
       partialize: (state) => ({
         user: state.user,
-        // We don't strictly persist isAuthenticated as it should be verified
-        // against the presence of cookies on the client side.
+        isAuthenticated: state.isAuthenticated,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true);
+        if (!state) return;
+        state.setHydrated(true);
+        // Validate: only keep isAuthenticated=true if we also have a cookie
         const hasToken = !!Cookies.get('access_token');
-        if (state && hasToken && state.user) {
-          state.isAuthenticated = true;
+        if (!hasToken) {
+          // Token expired or cleared — force unauthenticated
+          state.isAuthenticated = false;
+          state.user = null;
         }
       },
     },

@@ -3,7 +3,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = 'https://esut-rs.onrender.com';
+const API_URL = 'https://esut-rs.vercel.app';
 
 export const api = axios.create({
   baseURL: `${API_URL}/api`,
