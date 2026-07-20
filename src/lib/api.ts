@@ -77,6 +77,16 @@ export const adminApi = {
     api.get(
       `/admin/grading-config${programmeId ? `?programme_id=${programmeId}` : ''}`,
     ),
+
+  // Active academic session (per programme)
+  setCurrentSession: (data: {
+    programme_id?: string | null;
+    session: string;
+  }) => api.post('/admin/current-session', data),
+  getCurrentSession: (programmeId?: string) =>
+    api.get(
+      `/admin/current-session${programmeId ? `?programme_id=${programmeId}` : ''}`,
+    ),
 };
 
 // ── Programmes ────────────────────────────────────────────

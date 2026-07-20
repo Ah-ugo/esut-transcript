@@ -12,12 +12,26 @@ import {
   Clock,
 } from 'lucide-react';
 import Link from 'next/link';
-import { coursesApi, resultsApi } from '../../../lib/api';
+import { coursesApi, resultsApi, adminApi } from '../../../lib/api';
+
 import { useAuthStore } from '../../../store/authStore';
+import { useState, useEffect } from 'react';
 
 export default function LecturerDashboard() {
   const { user } = useAuthStore();
-  const currentSession = '2023/2024';
+  const [currentSession, setCurrentSession] = useState('2023/2024');
+
+  useEffect(() => {
+    adminApi
+      .getCurrentSession(null)
+      .then((r) => {
+        const s = r.data?.session;
+        if (s) setCurrentSession(s);
+      })
+      .catch(() => {
+        // keep default
+      });
+  }, []);
 
   const { data: courseData, isLoading } = useQuery({
     queryKey: ['lecturer-courses', user?.id, currentSession],

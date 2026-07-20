@@ -5,7 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { BookOpen, Users, Layers, Search } from 'lucide-react';
 import { coursesApi } from '../../../../lib/api';
 import { useAuthStore } from '../../../../store/authStore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { adminApi } from '../../../../lib/api';
 
 const SESSIONS = ['2023/2024', '2022/2023', '2021/2022', '2020/2021'];
 
@@ -13,6 +14,22 @@ export default function LecturerCoursesPage() {
   const { user } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [session, setSession] = useState(SESSIONS[0]);
+  const [programmeId, setProgrammeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // We can only auto-pick current session once we know which programme(s) belong to this lecturer.
+    // For now, default to global behavior handled by the admin-set session (programme_id: null).
+    // If your system later links lecturers to programmes, set programmeId accordingly.
+    adminApi
+      .getCurrentSession(null)
+      .then((r) => {
+        const s = r.data?.session;
+        if (s) setSession(s);
+      })
+      .catch(() => {
+        // keep default
+      });
+  }, []);
 
   const { data: coursesData, isLoading } = useQuery({
     queryKey: ['lecturer-courses', user?.id, session],

@@ -26,6 +26,7 @@ import {
   FolderOpen,
   FileBadge,
   ScrollText,
+  Clock,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../lib/api';
@@ -58,6 +59,13 @@ const navItems: NavItem[] = [
     icon: BookOpen,
     roles: ['admin'],
   },
+  {
+    label: 'Sessions',
+    href: '/dashboard/admin/sessions',
+    icon: Clock,
+    roles: ['admin'],
+  },
+
   {
     label: 'Programmes',
     href: '/dashboard/admin/programmes',
