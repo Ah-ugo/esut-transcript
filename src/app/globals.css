@@ -24,8 +24,14 @@
   }
 
   .btn-primary {
-    @apply bg-esut-green text-white px-4 py-2 rounded-xl font-semibold 
-           hover:bg-esut-green-dark transition-colors disabled:opacity-50 
+    @apply bg-esut-maroon text-white px-4 py-2 rounded-xl font-semibold 
+           hover:bg-esut-maroon-dark transition-colors disabled:opacity-50 
+           disabled:cursor-not-allowed shadow-sm;
+  }
+
+  .btn-maroon {
+    @apply bg-esut-maroon text-white px-4 py-2 rounded-xl font-semibold 
+           hover:bg-esut-maroon-dark transition-colors disabled:opacity-50 
            disabled:cursor-not-allowed shadow-sm;
   }
 

@@ -74,7 +74,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className='bg-gradient-to-b from-esut-green via-[#15492d] to-[#0f3621] text-white py-16 px-4 relative overflow-hidden'>
+      <section className='bg-gradient-to-b from-esut-green via-[#541000] to-[#360b00] text-white py-16 px-4 relative overflow-hidden'>
         <div className='absolute inset-0 opacity-10 pointer-events-none'>
           <div className='absolute -top-32 -left-32 w-96 h-96 bg-white rounded-full' />
           <div className='absolute bottom-0 right-0 w-80 h-80 bg-esut-gold rounded-full' />
@@ -149,7 +149,7 @@ export default function HomePage() {
           {/* Card 1: Students */}
           <div className='bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between hover:shadow-md transition-shadow'>
             <div>
-              <div className='w-12 h-12 rounded-xl bg-green-50 text-esut-green flex items-center justify-center mb-4'>
+              <div className='w-12 h-12 rounded-xl bg-esut-green/10 text-esut-green flex items-center justify-center mb-4'>
                 <GraduationCap size={24} />
               </div>
               <h3 className='text-lg font-bold text-slate-900 mb-1.5'>

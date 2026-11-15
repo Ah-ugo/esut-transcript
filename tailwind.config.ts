@@ -11,10 +11,35 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        esut: {
+          DEFAULT: '#721500',
+          maroon: '#721500',
+          'maroon-light': '#8f1a00',
+          'maroon-dark': '#4a0e00',
+          red: '#721500',
+          'red-light': '#8f1a00',
+          'red-dark': '#4a0e00',
+          green: '#721500', // backward compatibility alias for esut-green
+          'green-light': '#8f1a00',
+          'green-dark': '#4a0e00',
+          gold: '#c9a84c',
+          'gold-light': '#e0c06a',
+          'gold-dark': '#a88530',
+        },
+        'esut-red': {
+          DEFAULT: '#721500',
+          dark: '#4a0e00',
+          light: '#8f1a00',
+        },
+        'esut-maroon': {
+          DEFAULT: '#721500',
+          dark: '#4a0e00',
+          light: '#8f1a00',
+        },
         'esut-green': {
-          DEFAULT: '#1a5c38',
-          dark: '#113d25',
-          light: '#2d7a50',
+          DEFAULT: '#721500',
+          dark: '#4a0e00',
+          light: '#8f1a00',
         },
         'esut-gold': {
           DEFAULT: '#c9a84c',
@@ -50,12 +75,12 @@ const config: Config = {
       boxShadow: {
         gold: '0 4px 16px rgba(201, 168, 76, 0.3)',
         glass: '0 8px 32px rgba(0, 0, 0, 0.08)',
-        card: '0 2px 8px rgba(26, 92, 56, 0.08), 0 0 0 1px rgba(26, 92, 56, 0.04)',
+        card: '0 2px 8px rgba(114, 21, 0, 0.08), 0 0 0 1px rgba(114, 21, 0, 0.04)',
         'card-hover':
-          '0 8px 24px rgba(26, 92, 56, 0.14), 0 0 0 1px rgba(26, 92, 56, 0.08)',
+          '0 8px 24px rgba(114, 21, 0, 0.14), 0 0 0 1px rgba(114, 21, 0, 0.08)',
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [],
 };
 export default config;

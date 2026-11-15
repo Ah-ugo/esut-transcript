@@ -28,12 +28,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
             color: "#1e293b",
             borderRadius: "12px",
             boxShadow: "0 10px 40px rgba(0,0,0,0.12)",
-            border: "1px solid rgba(26, 92, 56, 0.1)",
+            border: "1px solid rgba(114, 21, 0, 0.1)",
             fontSize: "14px",
             fontFamily: "var(--font-sora)",
           },
           success: {
-            iconTheme: { primary: "#1a5c38", secondary: "#fff" },
+            iconTheme: { primary: "#721500", secondary: "#fff" },
           },
           error: {
             iconTheme: { primary: "#ef4444", secondary: "#fff" },

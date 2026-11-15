@@ -184,8 +184,8 @@ export default function GPAAnalyticsPage() {
             <AreaChart data={gpaOverTime}>
               <defs>
                 <linearGradient id='gpaGrad' x1='0' y1='0' x2='0' y2='1'>
-                  <stop offset='5%' stopColor='#1a5c38' stopOpacity={0.15} />
-                  <stop offset='95%' stopColor='#1a5c38' stopOpacity={0} />
+                  <stop offset='5%' stopColor='#721500' stopOpacity={0.15} />
+                  <stop offset='95%' stopColor='#721500' stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id='cgpaGrad' x1='0' y1='0' x2='0' y2='1'>
                   <stop offset='5%' stopColor='#c9a84c' stopOpacity={0.15} />
@@ -206,10 +206,10 @@ export default function GPAAnalyticsPage() {
               <Area
                 type='monotone'
                 dataKey='GPA'
-                stroke='#1a5c38'
+                stroke='#721500'
                 strokeWidth={2.5}
                 fill='url(#gpaGrad)'
-                dot={{ fill: '#1a5c38', r: 4 }}
+                dot={{ fill: '#721500', r: 4 }}
               />
               <Area
                 type='monotone'
@@ -248,8 +248,8 @@ export default function GPAAnalyticsPage() {
                 <Radar
                   name='Courses'
                   dataKey='count'
-                  stroke='#1a5c38'
-                  fill='#1a5c38'
+                  stroke='#721500'
+                  fill='#721500'
                   fillOpacity={0.2}
                   strokeWidth={2}
                 />

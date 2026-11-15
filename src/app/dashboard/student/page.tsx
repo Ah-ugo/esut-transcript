@@ -22,9 +22,9 @@ function GPAGauge({ cgpa }: { cgpa: number }) {
   const pct = (cgpa / 5.0) * 100;
   const color =
     cgpa >= 4.5
-      ? '#1a5c38'
+      ? '#721500'
       : cgpa >= 3.5
-        ? '#2d7a50'
+        ? '#8f1a00'
         : cgpa >= 2.4
           ? '#c9a84c'
           : '#ef4444';

@@ -240,7 +240,7 @@ export default function AdminDashboard() {
                     border: '1px solid #e2e8f0',
                     fontSize: 12,
                   }}
-                  cursor={{ fill: 'rgba(26,92,56,0.04)' }}
+                  cursor={{ fill: 'rgba(114,21,0,0.04)' }}
                 />
                 <Bar
                   dataKey='value'
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
                       key={i}
                       fill={
                         GRADE_COLORS[entry.name as keyof typeof GRADE_COLORS] ||
-                        '#1a5c38'
+                        '#721500'
                       }
                     />
                   ))}
