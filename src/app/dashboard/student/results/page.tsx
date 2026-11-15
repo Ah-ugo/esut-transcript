@@ -4,7 +4,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { ChevronDown, ChevronUp, BookOpen, Clock } from 'lucide-react';
 import { resultsApi, studentsApi } from '../../../../lib/api';
 import { useAuthStore } from '../../../../store/authStore';
 
@@ -170,6 +170,14 @@ export default function StudentResultsPage() {
     enabled: !!student?.id,
   });
 
+  const { data: rawResults } = useQuery({
+    queryKey: ['student-raw-results', student?.id],
+    queryFn: () =>
+      resultsApi.getStudentResults(student!.id).then((r) => r.data),
+    enabled: !!student?.id,
+  });
+
+  const pendingResults = (rawResults || []).filter((r: any) => r.status === 'pending');
   const cgpa = summary?.cgpa ?? 0;
   const degreeClass = summary?.degree_class ?? '—';
 
@@ -200,6 +208,33 @@ export default function StudentResultsPage() {
           </div>
         )}
       </div>
+
+      {pendingResults.length > 0 && (
+        <div className='p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2'>
+          <div className='flex items-center gap-2 text-amber-800 font-semibold text-sm'>
+            <Clock size={16} />
+            <span>{pendingResults.length} Result{pendingResults.length > 1 ? 's' : ''} Awaiting Administrative Approval</span>
+          </div>
+          <p className='text-xs text-amber-700 leading-relaxed'>
+            These scores were uploaded by your lecturer and are undergoing verification. Once approved by the administration, they will be factored into your official semester GPA and cumulative CGPA.
+          </p>
+          <div className='divide-y divide-amber-200/60 pt-1'>
+            {pendingResults.map((pr: any) => (
+              <div key={pr.id} className='py-2 flex items-center justify-between text-xs'>
+                <div>
+                  <span className='font-bold text-amber-900'>{pr.course_code}</span>
+                  <span className='text-amber-800 ml-2'>{pr.course_title || 'Course'}</span>
+                  <span className='text-amber-600 block text-[11px] capitalize'>{pr.session} · {pr.semester} semester</span>
+                </div>
+                <div className='flex items-center gap-3'>
+                  <span className='font-medium text-amber-900'>Score: {pr.score}</span>
+                  <span className='px-2 py-0.5 bg-amber-200 text-amber-900 font-bold rounded'>Grade: {pr.grade}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isLoading ? (
         <div className='space-y-4'>
