@@ -33,19 +33,10 @@ export default function AdminSessionsPage() {
     refetch: refetchCurrentSession,
     isFetching,
   } = useQuery({
-    queryKey: ['admin-current-session', selectedProgrammeId],
+    queryKey: ['admin-current-session', selectedProgrammeId ?? 'global'],
     queryFn: () =>
-      adminApi.getCurrentSession(selectedProgrammeId).then((r) => r.data),
-    enabled: selectedProgrammeId !== undefined && selectedProgrammeId !== null,
+      adminApi.getCurrentSession(selectedProgrammeId ?? undefined).then((r) => r.data),
   });
-
-  useEffect(() => {
-    // Auto-select first programme if none selected
-    const first = programmesData?.data?.[0];
-    if (!selectedProgrammeCode && first?.code) {
-      setSelectedProgrammeCode(first.code);
-    }
-  }, [programmesData, selectedProgrammeCode]);
 
   const [sessionToSave, setSessionToSave] = useState('');
 
@@ -93,7 +84,7 @@ export default function AdminSessionsPage() {
               onChange={(e) => setSelectedProgrammeCode(e.target.value)}
               className='input'
             >
-              <option value=''>Select programme</option>
+              <option value=''>Global Default (All Programmes)</option>
               {(programmesData?.data || []).map((p: any) => (
                 <option key={p.id} value={p.code}>
                   {p.name} ({p.code})
@@ -110,7 +101,7 @@ export default function AdminSessionsPage() {
               <span className='text-sm font-medium'>
                 {isFetching
                   ? 'Loading...'
-                  : currentSessionData?.session || 'Not set'}
+                  : currentSessionData?.session || '2024/2025'}
               </span>
               <span className='badge badge-gray'>Active</span>
             </div>
@@ -125,7 +116,6 @@ export default function AdminSessionsPage() {
             value={sessionToSave}
             onChange={(e) => setSessionToSave(e.target.value)}
             className='input w-full'
-            disabled={!selectedProgrammeId}
           >
             <option value=''>Select session</option>
             {/* Sessions that exist in the DB come first */}
@@ -152,7 +142,7 @@ export default function AdminSessionsPage() {
               const s = currentSessionData?.session;
               setSessionToSave(s || '');
             }}
-            disabled={!selectedProgrammeId || !currentSessionData}
+            disabled={!currentSessionData}
           >
             Reset
           </button>
@@ -161,7 +151,6 @@ export default function AdminSessionsPage() {
             className='btn-primary'
             type='button'
             disabled={
-              !selectedProgrammeId ||
               !sessionToSave ||
               setCurrentSessionMut.isPending
             }

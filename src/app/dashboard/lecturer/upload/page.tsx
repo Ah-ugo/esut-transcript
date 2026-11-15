@@ -48,11 +48,16 @@ export default function UploadResultsPage() {
       : JSON.stringify(detail) || 'An unexpected error occurred';
   };
 
+  const activeSession = singleResult.session || currentSession || '2024/2025';
+
   const handleSingleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
     try {
-      await resultsApi.add(singleResult);
+      await resultsApi.add({
+        ...singleResult,
+        session: activeSession,
+      });
       toast.success('Result added successfully');
       setSingleResult({
         ...singleResult,
@@ -177,22 +182,14 @@ export default function UploadResultsPage() {
               </label>
               <select
                 className='input w-full'
-                value={singleResult.session}
+                value={activeSession}
                 onChange={(e) =>
                   setSingleResult({ ...singleResult, session: e.target.value })
                 }
-                disabled={sessionsLoading}
               >
-                {sessionsLoading && (
-                  <option value=''>Loading sessions…</option>
-                )}
                 {sessions.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
-                {/* Allow typing a new session not yet in DB */}
-                {singleResult.session && !sessions.includes(singleResult.session) && (
-                  <option value={singleResult.session}>{singleResult.session}</option>
-                )}
               </select>
             </div>
             <div className='md:col-span-2 pt-4'>

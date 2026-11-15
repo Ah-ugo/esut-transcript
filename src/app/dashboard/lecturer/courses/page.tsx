@@ -6,35 +6,27 @@ import { BookOpen, Users, Layers, Search } from 'lucide-react';
 import { coursesApi } from '../../../../lib/api';
 import { useAuthStore } from '../../../../store/authStore';
 import { useState, useEffect } from 'react';
-import { adminApi } from '../../../../lib/api';
-
-const SESSIONS = ['2023/2024', '2022/2023', '2021/2022', '2020/2021'];
+import { useSessionOptions } from '../../../../hooks/useSessionOptions';
 
 export default function LecturerCoursesPage() {
   const { user } = useAuthStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [session, setSession] = useState(SESSIONS[0]);
-  const [programmeId, setProgrammeId] = useState<string | null>(null);
+  const { sessions, currentSession, isLoading: sessionsLoading } = useSessionOptions();
+  const [session, setSession] = useState('');
 
+  // Default to current session from backend once loaded
   useEffect(() => {
-    // We can only auto-pick current session once we know which programme(s) belong to this lecturer.
-    // For now, default to global behavior handled by the admin-set session (programme_id: null).
-    // If your system later links lecturers to programmes, set programmeId accordingly.
-    adminApi
-      .getCurrentSession(null)
-      .then((r) => {
-        const s = r.data?.session;
-        if (s) setSession(s);
-      })
-      .catch(() => {
-        // keep default
-      });
-  }, []);
+    if (currentSession && !session) {
+      setSession(currentSession);
+    }
+  }, [currentSession, session]);
+
+  const activeSession = session || currentSession || '2024/2025';
 
   const { data: coursesData, isLoading } = useQuery({
-    queryKey: ['lecturer-courses', user?.id, session],
+    queryKey: ['lecturer-courses', user?.id, activeSession],
     queryFn: () =>
-      coursesApi.getLecturerCourses(user!.id, session).then((r) => r.data),
+      coursesApi.getLecturerCourses(user!.id, activeSession).then((r) => r.data),
     enabled: !!user?.id,
   });
 
@@ -55,11 +47,12 @@ export default function LecturerCoursesPage() {
           </p>
         </div>
         <select
-          value={session}
+          value={activeSession}
           onChange={(e) => setSession(e.target.value)}
           className='input max-w-[200px]'
+          disabled={sessionsLoading && sessions.length === 0}
         >
-          {SESSIONS.map((s) => (
+          {sessions.map((s) => (
             <option key={s} value={s}>
               {s}
             </option>

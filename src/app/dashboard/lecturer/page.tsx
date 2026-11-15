@@ -12,32 +12,20 @@ import {
   Clock,
 } from 'lucide-react';
 import Link from 'next/link';
-import { coursesApi, resultsApi, adminApi } from '../../../lib/api';
-
+import { coursesApi, resultsApi } from '../../../lib/api';
 import { useAuthStore } from '../../../store/authStore';
-import { useState, useEffect } from 'react';
+import { useSessionOptions } from '../../../hooks/useSessionOptions';
 
 export default function LecturerDashboard() {
   const { user } = useAuthStore();
-  const [currentSession, setCurrentSession] = useState('2023/2024');
-
-  useEffect(() => {
-    adminApi
-      .getCurrentSession(null)
-      .then((r) => {
-        const s = r.data?.session;
-        if (s) setCurrentSession(s);
-      })
-      .catch(() => {
-        // keep default
-      });
-  }, []);
+  const { currentSession } = useSessionOptions();
+  const sessionToQuery = currentSession || '2024/2025';
 
   const { data: courseData, isLoading } = useQuery({
-    queryKey: ['lecturer-courses', user?.id, currentSession],
+    queryKey: ['lecturer-courses', user?.id, sessionToQuery],
     queryFn: () =>
       coursesApi
-        .getLecturerCourses(user!.id, currentSession)
+        .getLecturerCourses(user!.id, sessionToQuery)
         .then((r) => r.data),
     enabled: !!user?.id,
   });

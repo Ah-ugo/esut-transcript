@@ -579,10 +579,11 @@ export default function AdminCoursesPage() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   const formData = new FormData(e.currentTarget);
+                  const activeAssignSession = assignmentSession || currentSession || '2024/2025';
                   assignMut.mutate({
                     courseId: assignModal.courseId,
                     lecturer_id: formData.get('lecturer_id') as string,
-                    session: assignmentSession,
+                    session: activeAssignSession,
                   });
                 }}
                 className='space-y-4'
@@ -601,11 +602,10 @@ export default function AdminCoursesPage() {
                 <div>
                   <label className='label'>Academic Session</label>
                   <select
-                    value={assignmentSession}
+                    value={assignmentSession || currentSession || ''}
                     onChange={(e) => setAssignmentSession(e.target.value)}
                     className='input'
                   >
-                    <option value=''>Select session…</option>
                     {sessions.map((s) => (
                       <option key={s} value={s}>{s}</option>
                     ))}
