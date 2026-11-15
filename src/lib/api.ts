@@ -151,8 +151,9 @@ export const resultsApi = {
     semester: string;
     results: { matric_number: string; score: number }[];
   }) => api.post('/results/bulk', data),
-  uploadCsv: (formData: FormData) =>
+  uploadCsv: (formData: FormData, params?: { course_code?: string; session?: string; semester?: string }) =>
     api.post('/results/upload-csv', formData, {
+      params,
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   getStudentResults: (studentId: string, params?: any) =>
