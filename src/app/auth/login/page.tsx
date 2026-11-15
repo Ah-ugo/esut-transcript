@@ -3,12 +3,14 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Eye, EyeOff, GraduationCap, Shield, Lock } from 'lucide-react';
+import { Eye, EyeOff, GraduationCap, Shield, Lock, ArrowRight, UserCheck, BookOpen, Search } from 'lucide-react';
+import Image from 'next/image';
 import { authApi } from '../../../lib/api';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -28,10 +30,17 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  const handleQuickFill = (email: string, pass: string, roleName: string) => {
+    setValue('email', email, { shouldValidate: true });
+    setValue('password', pass, { shouldValidate: true });
+    toast.success(`Filled ${roleName} credentials! Click Sign In.`);
+  };
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
@@ -87,8 +96,8 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className='relative z-10 flex items-center gap-3'>
-          <div className='w-12 h-12 bg-esut-gold rounded-xl flex items-center justify-center shadow-gold'>
-            <GraduationCap size={24} className='text-white' />
+          <div className='w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-gold p-1 flex-shrink-0'>
+            <Image src='/esut-logo.png' alt='ESUT Logo' width={56} height={56} className='object-contain' />
           </div>
           <div>
             <p className='text-white font-bold text-lg leading-tight'>ESUT</p>
@@ -160,41 +169,78 @@ export default function LoginPage() {
         <div className='w-full max-w-md'>
           {/* Mobile logo */}
           <div className='lg:hidden flex items-center gap-2 mb-8'>
-            <div className='w-9 h-9 bg-esut-green rounded-lg flex items-center justify-center'>
-              <GraduationCap size={18} className='text-white' />
+            <div className='w-9 h-9 bg-white rounded-lg flex items-center justify-center p-0.5 shadow-sm'>
+              <Image src='/esut-logo.png' alt='ESUT Logo' width={32} height={32} className='object-contain' />
             </div>
             <span className='font-bold text-esut-green'>
               ESUT Result System
             </span>
           </div>
 
-          <div className='mb-8'>
+          <div className='mb-6'>
             <h2 className='text-3xl font-bold text-slate-800 mb-2 font-display'>
-              Sign in
+              Sign in to Portal
             </h2>
             <p className='text-slate-500 text-sm'>
-              Enter your credentials to access the portal.
+              Select your role below to auto-fill demo credentials, or type your login details manually.
             </p>
           </div>
 
-          {/* Demo credentials notice */}
-          <div className='bg-esut-green/5 border border-esut-green/20 rounded-xl p-4 mb-6'>
-            <p className='text-xs font-semibold text-esut-green mb-2 flex items-center gap-1.5'>
-              <Shield size={13} /> Demo Credentials
-            </p>
-            <div className='space-y-0.5 text-xs text-slate-600'>
-              <p>
-                <span className='font-medium'>Admin:</span> admin@esut.edu.ng /
-                admin123
-              </p>
-              <p>
-                <span className='font-medium'>Lecturer:</span>{' '}
-                dr.okafor@esut.edu.ng / lecturer123
-              </p>
-              <p>
-                <span className='font-medium'>Student:</span>{' '}
-                emeka.obiora@student.esut.edu.ng / ESUT/2021/CS/001
-              </p>
+          {/* Quick-Fill Role Selector */}
+          <div className='bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 shadow-sm'>
+            <div className='flex items-center justify-between mb-2.5'>
+              <span className='text-xs font-semibold text-slate-700 flex items-center gap-1.5'>
+                <UserCheck size={14} className='text-esut-green' /> 1-Click Demo Login
+              </span>
+              <span className='text-[10px] uppercase font-bold text-esut-green bg-esut-green/10 px-2 py-0.5 rounded-full'>
+                Click to Auto-Fill
+              </span>
+            </div>
+
+            <div className='grid grid-cols-2 gap-2 text-xs'>
+              <button
+                type='button'
+                onClick={() => handleQuickFill('adaeze.akpata@pg.esut.edu.ng', '2024070000978', 'M.Eng Candidate')}
+                className='text-left p-2 rounded-lg bg-white border border-slate-200 hover:border-esut-green hover:bg-esut-green/5 transition-all'
+              >
+                <div className='font-bold text-slate-800 flex items-center gap-1'>
+                  🎓 M.Eng Defence
+                </div>
+                <div className='text-[11px] text-slate-500 truncate'>Adaeze Akpata (5.0 CGPA)</div>
+              </button>
+
+              <button
+                type='button'
+                onClick={() => handleQuickFill('dr.gide@esut.edu.ng', 'lecturer123', 'M.Eng Lecturer')}
+                className='text-left p-2 rounded-lg bg-white border border-slate-200 hover:border-esut-green hover:bg-esut-green/5 transition-all'
+              >
+                <div className='font-bold text-slate-800 flex items-center gap-1'>
+                  👨‍🏫 M.Eng Lecturer
+                </div>
+                <div className='text-[11px] text-slate-500 truncate'>Dr. Gide (CEE 810/831/818)</div>
+              </button>
+
+              <button
+                type='button'
+                onClick={() => handleQuickFill('admin@esut.edu.ng', 'admin123', 'System Admin')}
+                className='text-left p-2 rounded-lg bg-white border border-slate-200 hover:border-esut-green hover:bg-esut-green/5 transition-all'
+              >
+                <div className='font-bold text-slate-800 flex items-center gap-1'>
+                  🛡️ System Admin
+                </div>
+                <div className='text-[11px] text-slate-500 truncate'>Registry / Full Access</div>
+              </button>
+
+              <button
+                type='button'
+                onClick={() => handleQuickFill('chukwuemeka.nnamani@student.esut.edu.ng', 'ESUT/2021/COE/012', 'Undergrad Student')}
+                className='text-left p-2 rounded-lg bg-white border border-slate-200 hover:border-esut-green hover:bg-esut-green/5 transition-all'
+              >
+                <div className='font-bold text-slate-800 flex items-center gap-1'>
+                  📚 Undergrad Student
+                </div>
+                <div className='text-[11px] text-slate-500 truncate'>Computer Eng (400L)</div>
+              </button>
             </div>
           </div>
 
@@ -244,7 +290,7 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               type='submit'
               disabled={isLoading}
-              className='btn-primary w-full py-3 flex items-center justify-center gap-2'
+              className='btn-primary w-full py-3 flex items-center justify-center gap-2 font-semibold'
             >
               {isLoading ? (
                 <>
@@ -260,8 +306,21 @@ export default function LoginPage() {
             </motion.button>
           </form>
 
-          <p className='text-center text-xs text-slate-400 mt-8'>
-            Protected by 256-bit SSL encryption
+          {/* Public Verification Shortcut */}
+          <div className='mt-6 pt-5 border-t border-slate-200/80 text-center'>
+            <p className='text-xs text-slate-500 mb-2'>
+              Employer, Embassy, or External Institution?
+            </p>
+            <Link
+              href='/verify'
+              className='inline-flex items-center gap-1.5 text-xs font-semibold text-esut-green hover:underline'
+            >
+              <Search size={13} /> Verify Official Student Transcript (No Login Required) →
+            </Link>
+          </div>
+
+          <p className='text-center text-xs text-slate-400 mt-6'>
+            Enugu State University of Science and Technology · Result Processing System
           </p>
         </div>
       </motion.div>

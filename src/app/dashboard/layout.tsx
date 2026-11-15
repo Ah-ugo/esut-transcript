@@ -28,6 +28,7 @@ import {
   ScrollText,
   Clock,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../lib/api';
 
@@ -189,8 +190,8 @@ export default function DashboardLayout({
     <div className='flex flex-col h-full'>
       {/* Brand */}
       <div className='px-4 py-5 flex items-center gap-3 border-b border-white/10'>
-        <div className='w-9 h-9 bg-esut-gold rounded-xl flex items-center justify-center flex-shrink-0 shadow-gold'>
-          <GraduationCap size={18} className='text-white' />
+        <div className='w-9 h-9 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm p-0.5'>
+          <Image src='/esut-logo.png' alt='ESUT Logo' width={32} height={32} className='object-contain' />
         </div>
         <AnimatePresence>
           {!collapsed && (

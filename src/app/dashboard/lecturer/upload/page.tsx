@@ -1,23 +1,35 @@
 /** @format */
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Upload, FileText, Plus } from 'lucide-react';
 import { resultsApi } from '../../../../lib/api';
+import { useSessionOptions } from '../../../../hooks/useSessionOptions';
 import toast from 'react-hot-toast';
 
 export default function UploadResultsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMode, setUploadMode] = useState<'csv' | 'single'>('single');
-  // Form state for single result
+
+  // Load sessions dynamically from the backend
+  const { sessions, currentSession, isLoading: sessionsLoading } = useSessionOptions();
+
+  // Form state for single result — initialise empty; update session once loaded
   const [singleResult, setSingleResult] = useState({
-    matric_number: '', // Changed from student_id
-    course_code: '', // Changed from course_id
+    matric_number: '',
+    course_code: '',
     score: 0,
-    session: '2023/2024',
+    session: '',
     semester: 'first',
   });
+
+  // Once the current session is known, set it as the default
+  useEffect(() => {
+    if (currentSession && !singleResult.session) {
+      setSingleResult((prev) => ({ ...prev, session: currentSession }));
+    }
+  }, [currentSession, singleResult.session]);
 
   // Helper to extract string messages from complex error objects (like FastAPI 422s)
   const getErrorMessage = (error: any) => {
@@ -169,9 +181,18 @@ export default function UploadResultsPage() {
                 onChange={(e) =>
                   setSingleResult({ ...singleResult, session: e.target.value })
                 }
+                disabled={sessionsLoading}
               >
-                <option value='2023/2024'>2023/2024</option>
-                <option value='2022/2023'>2022/2023</option>
+                {sessionsLoading && (
+                  <option value=''>Loading sessions…</option>
+                )}
+                {sessions.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+                {/* Allow typing a new session not yet in DB */}
+                {singleResult.session && !sessions.includes(singleResult.session) && (
+                  <option value={singleResult.session}>{singleResult.session}</option>
+                )}
               </select>
             </div>
             <div className='md:col-span-2 pt-4'>

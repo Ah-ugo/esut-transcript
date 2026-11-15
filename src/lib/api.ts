@@ -3,7 +3,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = 'https://esut-rs.vercel.app';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://esut-rs.vercel.app';
 
 export const api = axios.create({
   baseURL: `${API_URL}/api`,
@@ -87,6 +87,8 @@ export const adminApi = {
     api.get(
       `/admin/current-session${programmeId ? `?programme_id=${programmeId}` : ''}`,
     ),
+  /** All distinct sessions that exist in the DB (from results, courses, config) */
+  getSessions: () => api.get('/admin/sessions'),
 };
 
 // ── Programmes ────────────────────────────────────────────
@@ -107,7 +109,7 @@ export const coursesApi = {
     code: string;
     title: string;
     units: number;
-    semester: 'first' | 'second';
+    semester: 'first' | 'second' | 'third';
     level: number;
     programme_code: string;
   }) => api.post('/courses/', data),

@@ -1,0 +1,119 @@
+/** @format */
+
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ShieldCheck, Search, ArrowRight, CheckCircle2, GraduationCap } from 'lucide-react';
+
+export default function VerifySearchPage() {
+  const router = useRouter();
+  const [matric, setMatric] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!matric.trim()) return;
+    router.push(`/verify/${encodeURIComponent(matric.trim())}`);
+  };
+
+  const sampleMatrics = [
+    { label: 'Akpata Adaeze (M.Eng Defence)', val: '2024070000978' },
+    { label: 'Ogbonna Emmanuel (M.Eng Defence)', val: '2024070001017' },
+    { label: 'Okorie Godwin (M.Eng Defence)', val: '2024070001412' },
+    { label: 'Nnamani Chukwuemeka (B.Eng COE)', val: 'ESUT/2021/COE/012' },
+  ];
+
+  return (
+    <div className='min-h-screen bg-slate-50 flex flex-col justify-between p-6'>
+      <header className='max-w-4xl mx-auto w-full flex items-center justify-between py-4 border-b border-slate-200'>
+        <Link href='/' className='flex items-center gap-3'>
+          <div className='w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 p-0.5'>
+            <Image src='/esut-logo.png' alt='ESUT Logo' width={36} height={36} className='object-contain' />
+          </div>
+          <div>
+            <span className='font-bold text-slate-800 text-base'>ESUT Transcript Registry</span>
+            <p className='text-slate-400 text-xs'>Enugu State University of Science & Technology</p>
+          </div>
+        </Link>
+        <Link href='/auth/login' className='text-xs font-semibold text-esut-green hover:underline'>
+          Sign in to Portal →
+        </Link>
+      </header>
+
+      <main className='max-w-xl mx-auto w-full my-auto py-10'>
+        <div className='text-center mb-8'>
+          <div className='flex justify-center mb-4'>
+            <div className='w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center p-1'>
+              <Image src='/esut-logo.png' alt='ESUT Logo' width={56} height={56} className='object-contain' />
+            </div>
+          </div>
+          <h1 className='text-2xl font-bold text-slate-900'>Verify Academic Transcript</h1>
+          <p className='text-slate-500 text-sm mt-1.5 max-w-md mx-auto'>
+            Enter a student’s Registration Number or Matriculation Number to verify their authentic academic standing.
+          </p>
+        </div>
+
+        <div className='bg-white rounded-2xl p-6 shadow-sm border border-slate-200'>
+          <form onSubmit={handleSearch} className='space-y-4'>
+            <div>
+              <label className='block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2'>
+                Registration / Matriculation Number
+              </label>
+              <div className='relative'>
+                <input
+                  type='text'
+                  value={matric}
+                  onChange={(e) => setMatric(e.target.value)}
+                  placeholder='e.g. 2024070000978 or ESUT/2021/COE/012'
+                  className='input pl-10 text-slate-800 font-medium'
+                  autoFocus
+                />
+                <Search size={18} className='absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400' />
+              </div>
+            </div>
+
+            <button
+              type='submit'
+              disabled={!matric.trim()}
+              className='btn-primary w-full py-3 flex items-center justify-center gap-2 font-semibold disabled:opacity-50'
+            >
+              Verify Transcript Record <ArrowRight size={16} />
+            </button>
+          </form>
+
+          <div className='mt-6 pt-5 border-t border-slate-100'>
+            <p className='text-xs font-medium text-slate-500 mb-2.5'>Click a sample student to test:</p>
+            <div className='flex flex-wrap gap-2'>
+              {sampleMatrics.map((s) => (
+                <button
+                  key={s.val}
+                  type='button'
+                  onClick={() => router.push(`/verify/${encodeURIComponent(s.val)}`)}
+                  className='text-xs bg-slate-100 hover:bg-esut-green hover:text-white px-2.5 py-1.5 rounded-lg text-slate-700 transition-colors'
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className='mt-8 bg-green-50 border border-green-200 rounded-xl p-4 text-xs text-green-900 flex items-start gap-2.5'>
+          <CheckCircle2 size={16} className='text-green-700 shrink-0 mt-0.5' />
+          <div>
+            <p className='font-semibold'>Institutional Authenticity Guarantee</p>
+            <p className='text-green-800/80 mt-0.5'>
+              Official transcripts generated by the ESUT Registry include a QR code linking directly to this page for zero-trust third-party verification.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <footer className='text-center text-xs text-slate-400 py-4'>
+        © {new Date().getFullYear()} Enugu State University of Science and Technology. All rights reserved.
+      </footer>
+    </div>
+  );
+}
+

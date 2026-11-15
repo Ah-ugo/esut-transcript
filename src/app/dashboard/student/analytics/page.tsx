@@ -44,7 +44,7 @@ export default function GPAAnalyticsPage() {
 
   // Build chart data
   const gpaOverTime = semesters.map((s: any, i: number) => ({
-    name: `${s.session.split('/')[0]} ${s.semester === 'first' ? '1st' : '2nd'}`,
+    name: `${s.session.split('/')[0]} ${s.semester === 'first' ? '1st' : s.semester === 'second' ? '2nd' : '3rd'}`,
     GPA: s.gpa,
     CGPA: (() => {
       // cumulative up to this point

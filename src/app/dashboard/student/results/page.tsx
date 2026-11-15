@@ -52,7 +52,7 @@ function SemesterCard({ semester, index }: { semester: any; index: number }) {
       >
         <div className='flex items-center gap-4'>
           <div className='w-10 h-10 rounded-xl bg-esut-green flex items-center justify-center text-white text-xs font-bold'>
-            {semester.semester === 'first' ? '1ST' : '2ND'}
+            {semester.semester === 'first' ? '1ST' : semester.semester === 'second' ? '2ND' : '3RD'}
           </div>
           <div className='text-left'>
             <p className='font-semibold text-slate-800 text-sm'>

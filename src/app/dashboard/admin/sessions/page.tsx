@@ -6,28 +6,14 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { programmesApi, adminApi } from '../../../../lib/api';
-
-const COMMON_SESSIONS = [
-  '2020/2021',
-  '2021/2022',
-  '2022/2023',
-  '2023/2024',
-  '2024/2025',
-  '2025/2026',
-  '2026/2027',
-  '2027/2028',
-  '2028/2029',
-  '2029/2030',
-  '2030/2031',
-  '2031/2032',
-  '2032/2033',
-  '2033/2034',
-  '2034/2035',
-];
+import { useSessionOptions } from '../../../../hooks/useSessionOptions';
 
 export default function AdminSessionsPage() {
   const [selectedProgrammeCode, setSelectedProgrammeCode] =
     useState<string>('');
+
+  // Dynamic sessions from DB
+  const { sessions: dbSessions } = useSessionOptions();
 
   const { data: programmesData } = useQuery({
     queryKey: ['admin-programmes-for-session'],
@@ -142,11 +128,19 @@ export default function AdminSessionsPage() {
             disabled={!selectedProgrammeId}
           >
             <option value=''>Select session</option>
-            {COMMON_SESSIONS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
+            {/* Sessions that exist in the DB come first */}
+            {dbSessions.length > 0
+              ? dbSessions.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))
+              : /* Fallback static list while loading */
+                ['2024/2025', '2025/2026', '2026/2027', '2023/2024', '2022/2023'].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
           </select>
         </div>
 

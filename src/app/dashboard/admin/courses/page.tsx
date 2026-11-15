@@ -1,7 +1,7 @@
 /** @format */
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -15,6 +15,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { coursesApi, programmesApi, usersApi } from '../../../../lib/api';
+import { useSessionOptions } from '../../../../hooks/useSessionOptions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,8 +25,8 @@ const courseSchema = z.object({
   code: z.string().min(3, 'Course code required'),
   title: z.string().min(5, 'Title required'),
   units: z.coerce.number().min(1).max(6),
-  semester: z.enum(['first', 'second']),
-  level: z.coerce.number().min(100).max(500),
+  semester: z.enum(['first', 'second', 'third']),
+  level: z.coerce.number().min(100).max(900),
   programme_code: z.string().min(1, 'Programme required'),
   is_elective: z.boolean().default(false),
   description: z.string().optional(),
@@ -46,7 +47,17 @@ export default function AdminCoursesPage() {
     courseId: string;
     courseCode: string;
   }>({ show: false, courseId: '', courseCode: '' });
-  const [assignmentSession, setAssignmentSession] = useState('2023/2024');
+  const [assignmentSession, setAssignmentSession] = useState('');
+
+  // Load sessions dynamically from the backend
+  const { sessions, currentSession } = useSessionOptions();
+
+  // Once current session is known, set it as the default for assignment
+  useEffect(() => {
+    if (currentSession && !assignmentSession) {
+      setAssignmentSession(currentSession);
+    }
+  }, [currentSession, assignmentSession]);
 
   // Helper to extract string messages from complex error objects (like FastAPI 422s)
   const getErrorMessage = (error: any) => {
@@ -210,6 +221,7 @@ export default function AdminCoursesPage() {
           <option value=''>All Semesters</option>
           <option value='first'>First Semester</option>
           <option value='second'>Second Semester</option>
+          <option value='third'>Third Semester</option>
         </select>
         <select
           value={levelFilter}
@@ -217,7 +229,7 @@ export default function AdminCoursesPage() {
           className='input w-auto'
         >
           <option value=''>All Levels</option>
-          {[100, 200, 300, 400, 500].map((l) => (
+          {[100, 200, 300, 400, 500, 700, 800, 900].map((l) => (
             <option key={l} value={l}>
               {l}L
             </option>
@@ -485,7 +497,7 @@ export default function AdminCoursesPage() {
                   <div>
                     <label className='label'>Level *</label>
                     <select {...register('level')} className='input'>
-                      {[100, 200, 300, 400, 500].map((l) => (
+                      {[100, 200, 300, 400, 500, 700, 800, 900].map((l) => (
                         <option key={l} value={l}>
                           {l} Level
                         </option>
@@ -497,6 +509,7 @@ export default function AdminCoursesPage() {
                     <select {...register('semester')} className='input'>
                       <option value='first'>First Semester</option>
                       <option value='second'>Second Semester</option>
+                      <option value='third'>Third Semester</option>
                     </select>
                   </div>
                   <div className='col-span-2'>
@@ -592,21 +605,10 @@ export default function AdminCoursesPage() {
                     onChange={(e) => setAssignmentSession(e.target.value)}
                     className='input'
                   >
-                    <option value='2020/2021'>2020/2021</option>
-                    <option value='2021/2022'>2021/2022</option>
-                    <option value='2022/2023'>2022/2023</option>
-                    <option value='2023/2024'>2023/2024</option>
-                    <option value='2024/2025'>2024/2025</option>
-                    <option value='2025/2026'>2025/2026</option>
-                    <option value='2026/2027'>2026/2027</option>
-                    <option value='2027/2028'>2027/2028</option>
-                    <option value='2028/2029'>2028/2029</option>
-                    <option value='2029/2030'>2029/2030</option>
-                    <option value='2030/2031'>2030/2031</option>
-                    <option value='2031/2032'>2031/2032</option>
-                    <option value='2032/2033'>2032/2033</option>
-                    <option value='2033/2034'>2033/2034</option>
-                    <option value='2034/2035'>2034/2035</option>
+                    <option value=''>Select session…</option>
+                    {sessions.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
                   </select>
                 </div>
                 <div className='flex gap-3 justify-end pt-2'>
